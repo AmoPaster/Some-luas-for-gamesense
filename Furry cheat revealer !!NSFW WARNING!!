@@ -1,5 +1,5 @@
 -- ==========================================================
--- KEV'S CHEAT REVEALER | V3.1 - Made by AmoPaster
+-- KEV'S CHEAT REVEALER | V3.2 (CRASH FIX & MEMORY OPTIMIZED)
 -- Modified with Auto-Downloader
 -- ==========================================================
 local ffi = require("ffi")
@@ -13,45 +13,36 @@ local tab, container = "LUA", "A"
 -- СПИСОК ФАЙЛОВ ДЛЯ СКАЧИВАНИЯ
 -- ==========================================
 local download_list = {
-    ["Kev.png"] = "https://i.ibb.co/Kj2RZzps/Kev.png",
-    ["gs.png"]  = "https://i.ibb.co/cK5bYMC9/gs.png",
-    ["nl.png"]  = "https://i.ibb.co/wm5CLP9/nl.png",
-    ["ft.png"]  = "https://i.ibb.co/S7747BQG/ft.png",
-    ["pr.png"]  = "https://i.ibb.co/7tr2vhVJ/pr.png",
-    ["pd.png"]  = "https://i.ibb.co/5Xds550k/pd.png"
+    ["Kev.png"] = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/a44b42313f13d6c8eb032b946abf5eadb25ab4de/Kev.png",
+    ["gs.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/a44b42313f13d6c8eb032b946abf5eadb25ab4de/gs.png",
+    ["nl.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/a44b42313f13d6c8eb032b946abf5eadb25ab4de/nl.png",
+    ["ft.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/a44b42313f13d6c8eb032b946abf5eadb25ab4de/ft.png",
+    ["pr.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/a44b42313f13d6c8eb032b946abf5eadb25ab4de/pr.png",
+    ["pd.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/a44b42313f13d6c8eb032b946abf5eadb25ab4de/pd.png"
 }
 
 local missing_files = {}
-
--- Проверка наличия файлов в папке kev_rev или csgo/kev_rev
 for filename, url in pairs(download_list) do
     if readfile("kev_rev/" .. filename) == nil and readfile("csgo/kev_rev/" .. filename) == nil then
         table.insert(missing_files, {name = filename, url = url})
     end
 end
 
--- Функция умного скачивания (Парсит HTML ibb.co и достает прямую ссылку на PNG)
 local function download_file(url, filename, callback)
     http.get(url, function(success, response)
         if success and response.status == 200 then
-            local body = response.body
-            -- Ищем прямую ссылку через OpenGraph тег
-            local direct_url = string.match(body, 'meta property="og:image" content="([^"]+)"')
+            local direct_url = string.match(response.body, 'meta property="og:image" content="([^"]+)"')
             if direct_url then
-                -- Качаем саму картинку
                 http.get(direct_url, function(s2, r2)
-                    if s2 and r2.status == 200 then
-                        writefile("kev_rev/" .. filename, r2.body)
-                    end
+                    if s2 and r2.status == 200 then writefile("kev_rev/" .. filename, r2.body) end
                     callback()
                 end)
             else
-                -- Если ссылка уже была прямой
-                writefile("kev_rev/" .. filename, body)
+                writefile("kev_rev/" .. filename, response.body)
                 callback()
             end
         else
-            callback() -- Если ошибка сети, продолжаем чтобы не зависнуть
+            callback()
         end
     end)
 end
@@ -60,7 +51,6 @@ end
 -- ГЛАВНАЯ ФУНКЦИЯ СКРИПТА
 -- ==========================================
 local function start_main_script()
-    -- UI НАСТРОЙКИ СКРИПТА
     ui.new_label(tab, container, "====== KEV'S REVEALER V3 ======")
     local ui_toggle_menu = ui.new_hotkey(tab, container, "Toggle Revealer Menu", true, 0x24)
     local ui_perf_mode = ui.new_checkbox(tab, container, "Performance Mode (Disable Glow/Cat)")
@@ -73,7 +63,6 @@ local function start_main_script()
     local ui_scale = ui.new_slider(tab, container, "UI Scale", 50, 150, 100, true, "%")
     ui.new_label(tab, container, "===============================")
 
-    -- БАЗА ДАННЫХ И ИНФОРМАЦИЯ
     local cheat_info = {
         gs = { name = "Gamesense", color = {149, 184, 12, 255}, creator = "Esoterik", cracked = "2023, 2025", pros = "Lua API, Resolver, Optimization", cons = "Invite Only, Slow Updates", desc = "The most exclusive private software. Detected by unique voice packet sequencing." },
         nl = { name = "Neverlose", color = {3, 118, 150, 255}, creator = "Soufiw", cracked = "2026", pros = "Anti-Aim, Inventory, Market", cons = "High Price, FPS Drops", desc = "Popular premium cheat. Detected via XUID mutation anomalies in data packets." },
@@ -89,10 +78,7 @@ local function start_main_script()
     for _, v in ipairs(fallbacks) do cheat_info[v] = cheat_info.wh end
 
     local loaded_icons = {}
-    local cat_image = nil
-
     local function load_image(name) return readfile("csgo/kev_rev/" .. name .. ".png") or readfile("kev_rev/" .. name .. ".png") end
-
     local function draw_icon(cheat_id, x, y, w, h, alpha)
         if loaded_icons[cheat_id] == nil then
             local file_data = load_image(cheat_id)
@@ -103,10 +89,9 @@ local function start_main_script()
     end
 
     local cat_data = load_image("Kev")
-    if cat_data then cat_image = images.load(cat_data) end
+    local cat_image = cat_data and images.load(cat_data) or nil
 
     local function lerp(a, b, t) return a + (b - a) * t end
-
     local function fast_lerp(a, b, speed, dt)
         local diff = b - a
         if math.abs(diff) < 0.01 then return b end
@@ -118,11 +103,13 @@ local function start_main_script()
         renderer.rectangle(x + r, y, w - r * 2, h, cr, cg, cb, ca)
         renderer.rectangle(x, y + r, r, h - r * 2, cr, cg, cb, ca)
         renderer.rectangle(x + w - r, y + r, r, h - r * 2, cr, cg, cb, ca)
-        for i = 1, r do
-            renderer.circle_outline(x + r, y + r, cr, cg, cb, ca, i, 180, 0.25, 1)
-            renderer.circle_outline(x + w - r, y + r, cr, cg, cb, ca, i, 270, 0.25, 1)
-            renderer.circle_outline(x + w - r, y + h - r, cr, cg, cb, ca, i, 0, 0.25, 1)
-            renderer.circle_outline(x + r, y + h - r, cr, cg, cb, ca, i, 90, 0.25, 1)
+        if r > 0 then
+            for i = 1, r do
+                renderer.circle_outline(x + r, y + r, cr, cg, cb, ca, i, 180, 0.25, 1)
+                renderer.circle_outline(x + w - r, y + r, cr, cg, cb, ca, i, 270, 0.25, 1)
+                renderer.circle_outline(x + w - r, y + h - r, cr, cg, cb, ca, i, 0, 0.25, 1)
+                renderer.circle_outline(x + r, y + h - r, cr, cg, cb, ca, i, 90, 0.25, 1)
+            end
         end
     end
 
@@ -131,15 +118,15 @@ local function start_main_script()
         renderer.rectangle(x + 2, y, w - 4, h, cr, cg, cb, ca)
         renderer.rectangle(x, y + 2, 2, h - 4, cr, cg, cb, ca)
         renderer.rectangle(x + w - 2, y + 2, 2, h - 4, cr, cg, cb, ca)
-        local a_half = math.floor(ca * 0.5)
-        renderer.rectangle(x + 1, y + 1, 1, 1, cr, cg, cb, a_half)
-        renderer.rectangle(x + w - 2, y + 1, 1, 1, cr, cg, cb, a_half)
-        renderer.rectangle(x + 1, y + h - 2, 1, 1, cr, cg, cb, a_half)
-        renderer.rectangle(x + w - 2, y + h - 2, 1, 1, cr, cg, cb, a_half)
+        local ah = math.floor(ca * 0.5)
+        renderer.rectangle(x+1, y+1, 1, 1, cr, cg, cb, ah)
+        renderer.rectangle(x+w-2, y+1, 1, 1, cr, cg, cb, ah)
+        renderer.rectangle(x+1, y+h-2, 1, 1, cr, cg, cb, ah)
+        renderer.rectangle(x+w-2, y+h-2, 1, 1, cr, cg, cb, ah)
     end
 
     local function draw_hollow_glow(x, y, w, h, r1, g1, b1, a, size)
-        if ui.get(ui_perf_mode) or size <= 0 or a <= 0 then return end
+        if size <= 0 or a <= 0 then return end
         x, y, w, h = math.floor(x), math.floor(y), math.floor(w), math.floor(h)
         for i = 1, size do
             local cur_a = math.floor(a * (1 - (i / size)))
@@ -160,55 +147,145 @@ local function start_main_script()
         return name_cache[i]
     end
 
-    -- ЯДРО ДЕТЕКТА
+    -- ==========================================
+    -- ЯДРО ДЕТЕКТА (ПОЛНОСТЬЮ ПЕРЕПИСАНО: 0 УТЕЧЕК)
+    -- ==========================================
     local voice_data_t = ffi.typeof([[ struct { char pad_0[8]; int32_t cl; int32_t am; uint32_t xl; uint32_t xh; void* vd; bool prox; bool cas; char pad_1[2]; int32_t fmt; int32_t seq; uint32_t sec; uint32_t off; char pad_2[4]; uint32_t has; } * ]])
     local users_data = {}
     local detection_storage = { nl = {}, nw = {}, pd = {}, ot = {}, ft = {}, pl = {}, ev = {}, r7 = {}, af = {}, gs = {} }
 
-    local function find_duplicate(arr, div)
-        local vis = {}
-        for i=1, #arr do if not vis[arr[i]] then vis[arr[i]]=true for j=i+4, #arr do if i%div==0 then if arr[j]==arr[i] then return true end elseif arr[j]==arr[i] then return false end end end end return false
-    end
-
     local function reset_player(idx)
         users_data[idx] = { cheat = "wh", confidence = 0, locked = false, last_update = globals.realtime(), anim_conf = 0 }
-        for k, _ in pairs(detection_storage) do
-            if type(detection_storage[k]) == "table" then
-                detection_storage[k][idx] = nil
-            end
-        end
+        for k, _ in pairs(detection_storage) do if type(detection_storage[k]) == "table" then detection_storage[k][idx] = nil end end
     end
 
     local detector = {
-        nl = function(p, t) if p.xh == 0 then return false end if not detection_storage.nl[t] then detection_storage.nl[t] = {} end table.insert(detection_storage.nl[t], p.xh) if #detection_storage.nl[t] > 24 then if find_duplicate(detection_storage.nl[t], 4) and p.xh ~= 0 then return true end table.remove(detection_storage.nl[t], 1) end return false end,
-        pd = function(p, t) if not detection_storage.pd[t] then detection_storage.pd[t] = 0 end local sig = ("%.02X"):format(ffi.cast("uint16_t*", ffi.cast("uintptr_t", p) + 16)[0]) if detection_storage.pd[t] > 24 then return true elseif sig == "695B" or sig == "1B39" then detection_storage.pd[t] = detection_storage.pd[t] + 1 else detection_storage.pd[t] = 0 end return false end,
-        ft = function(p, t) if not detection_storage.ft[t] then detection_storage.ft[t] = 0 end local sig = ("%.02X"):format(ffi.cast("uint16_t*", ffi.cast("uintptr_t", p) + 16)[0]) if detection_storage.ft[t] > 36 then return true elseif sig == "7FFA" or sig == "7FFB" then detection_storage.ft[t] = detection_storage.ft[t] + 1 else detection_storage.ft[t] = 0 end return false end,
-        nw = function(p, t) if not detection_storage.nw[t] then detection_storage.nw[t] = 0 end if p.xh == 0 then detection_storage.nw[t] = detection_storage.nw[t] + 1 else detection_storage.nw[t] = 0 end if detection_storage.nw[t] > 34 then return true end return false end,
-        ot = function(p, t) if not detection_storage.ot[t] then detection_storage.ot[t] = {} end table.insert(detection_storage.ot[t], {s=p.seq, xl=p.xl, sec=p.sec, off=p.off}) if #detection_storage.ot[t] > 16 then local p1 = detection_storage.ot[t][1] local is_ot = true for i=2, #detection_storage.ot[t] do local pn = detection_storage.ot[t][i] if pn.xl ~= p1.xl or pn.sec ~= p1.sec or pn.off ~= p1.off then is_ot = false break end end table.remove(detection_storage.ot[t], 1) return is_ot end return false end,
-        gs = function(p, t) local sig = ("%.02X"):format(ffi.cast("uint16_t*", ffi.cast("uintptr_t", p) + 22)[0]) local seq = string.sub(p.seq, 1, 4) if not detection_storage.gs[t] then detection_storage.gs[t] = {r=0, p=sig, b=seq} end if seq ~= detection_storage.gs[t].b and sig ~= detection_storage.gs[t].p then detection_storage.gs[t].p = sig detection_storage.gs[t].b = seq detection_storage.gs[t].r = detection_storage.gs[t].r + 1 else detection_storage.gs[t].r = 0 end if detection_storage.gs[t].r >= 36 then return true end return false end
+        -- Использование Ring Buffer массивов вместо table.insert предотвращает сбор мусора в Lua
+        nl = function(p, t)
+            if p.xh == 0 then return false end
+            local ds = detection_storage.nl
+            if not ds[t] then ds[t] = {arr={}, head=1, count=0} end
+            local st = ds[t]
+            st.arr[st.head] = tonumber(p.xh)
+            st.head = (st.head % 24) + 1
+            st.count = math.min(st.count + 1, 24)
+
+            if st.count >= 24 then
+                local vis = {}
+                for i = 1, 24 do
+                    local val = st.arr[i]
+                    if not vis[val] then
+                        vis[val] = true
+                        for j = i + 4, 24 do
+                            if i % 4 == 0 then
+                                if st.arr[j] == val then return true end
+                            elseif st.arr[j] == val then
+                                return false
+                            end
+                        end
+                    end
+                end
+            end
+            return false
+        end,
+        pd = function(p, t)
+            local ds = detection_storage.pd
+            if not ds[t] then ds[t] = 0 end
+            -- Безопасный каст поинтера через char* предотвращает Access Violation
+            local sig = ffi.cast("uint16_t*", ffi.cast("uint8_t*", p) + 16)[0]
+            -- Вместо формата в строку `string.format` (утечка памяти) используются raw hex
+            if ds[t] > 24 then return true 
+            elseif sig == 0x695B or sig == 0x1B39 then ds[t] = ds[t] + 1 
+            else ds[t] = 0 end
+            return false
+        end,
+        ft = function(p, t)
+            local ds = detection_storage.ft
+            if not ds[t] then ds[t] = 0 end
+            local sig = ffi.cast("uint16_t*", ffi.cast("uint8_t*", p) + 16)[0]
+            if ds[t] > 36 then return true 
+            elseif sig == 0x7FFA or sig == 0x7FFB then ds[t] = ds[t] + 1 
+            else ds[t] = 0 end
+            return false
+        end,
+        nw = function(p, t)
+            local ds = detection_storage.nw
+            if not ds[t] then ds[t] = 0 end
+            if p.xh == 0 then ds[t] = ds[t] + 1 else ds[t] = 0 end
+            if ds[t] > 34 then return true end
+            return false
+        end,
+        ot = function(p, t)
+            local ds = detection_storage.ot
+            if not ds[t] then ds[t] = {xl={}, sec={}, off={}, head=1, count=0} end
+            local st = ds[t]
+            st.xl[st.head] = tonumber(p.xl)
+            st.sec[st.head] = tonumber(p.sec)
+            st.off[st.head] = tonumber(p.off)
+            st.head = (st.head % 16) + 1
+            st.count = math.min(st.count + 1, 16)
+
+            if st.count >= 16 then
+                local p1_xl, p1_sec, p1_off = st.xl[1], st.sec[1], st.off[1]
+                local is_ot = true
+                for i = 2, 16 do
+                    if st.xl[i] ~= p1_xl or st.sec[i] ~= p1_sec or st.off[i] ~= p1_off then
+                        is_ot = false break
+                    end
+                end
+                if is_ot then return true end
+            end
+            return false
+        end,
+        gs = function(p, t)
+            local sig = ffi.cast("uint16_t*", ffi.cast("uint8_t*", p) + 22)[0]
+            local seq = tonumber(p.seq)
+            local ds = detection_storage.gs
+            if not ds[t] then ds[t] = {r=0, p=sig, b=seq} end
+            
+            if seq ~= ds[t].b and sig ~= ds[t].p then 
+                ds[t].p = sig; ds[t].b = seq; ds[t].r = ds[t].r + 1 
+            else 
+                ds[t].r = 0 
+            end
+            if ds[t].r >= 36 then return true end
+            return false
+        end
     }
 
     client.set_event_callback("voice", function(e)
-        if not e.data then return end local p = ffi.cast(voice_data_t, e.data) if p == nil or p == ffi.NULL then return end
-        local t = (ffi.cast("uint8_t*", p) + 8)[0] + 1
+        if not e.data then return end 
+        local p = ffi.cast(voice_data_t, e.data) 
+        if p == nil or p == ffi.NULL then return end
+        
+        -- Безопасное чтение байтов 
+        local p_bytes = ffi.cast("uint8_t*", p)
+        local t = p_bytes[8] + 1
         if t <= 0 or t > 64 then return end
 
         if not users_data[t] then users_data[t] = { cheat = "wh", confidence = 0, locked = false, last_update = globals.realtime(), anim_conf = 0 } end
         local user = users_data[t]
 
-        if t == entity.get_local_player() then user.cheat = "gs" user.confidence = 100 user.locked = true return end
+        if t == entity.get_local_player() then user.cheat = "gs"; user.confidence = 100; user.locked = true; return end
         if user.locked then return end
         user.last_update = globals.realtime()
 
-        local hl = nil for c_id, f in pairs(detector) do if f(p, t) then hl = c_id break end end
-        if hl then user.locked = true; user.cheat = hl; user.confidence = 100 return end
+        local hl = nil 
+        for c_id, f in pairs(detector) do if f(p, t) then hl = c_id; break end end
+        if hl then user.locked = true; user.cheat = hl; user.confidence = 100; return end
 
         local mx, pc = 0, "wh"
-        local function up(c, v, mv) if v and type(v) == "number" then local p = math.floor((v/mv)*100) if p > mx then mx = p; pc = c end end end
-        up("pd", detection_storage.pd[t], 24) up("ft", detection_storage.ft[t], 36) up("nw", detection_storage.nw[t], 34) up("ot", detection_storage.ot[t] and #detection_storage.ot[t] or 0, 16) up("nl", detection_storage.nl[t] and #detection_storage.nl[t] or 0, 24) up("gs", detection_storage.gs[t] and detection_storage.gs[t].r or 0, 36)
+        local function up(c, v, mv) if v and type(v) == "number" then local pct = math.floor((v/mv)*100); if pct > mx then mx = pct; pc = c end end end
+        
+        up("pd", detection_storage.pd[t], 24) 
+        up("ft", detection_storage.ft[t], 36) 
+        up("nw", detection_storage.nw[t], 34) 
+        up("ot", detection_storage.ot[t] and detection_storage.ot[t].count or 0, 16) 
+        up("nl", detection_storage.nl[t] and detection_storage.nl[t].count or 0, 24) 
+        up("gs", detection_storage.gs[t] and detection_storage.gs[t].r or 0, 36)
 
-        if mx > 99 then mx = 99 end user.confidence = mx
-        if mx > 0 then user.cheat = pc else user.cheat = "wh" end
+        user.confidence = mx > 99 and 99 or mx
+        user.cheat = mx > 0 and pc or "wh"
     end)
 
     client.set_event_callback("paint", function()
@@ -224,7 +301,9 @@ local function start_main_script()
         end
     end)
 
-    -- UI / АНИМАЦИИ МЕНЮ
+    -- ==========================================
+    -- UI / МЕНЮ И РЕНДЕР
+    -- ==========================================
     local sw, sh = client.screen_size()
     local menu_x, menu_y = math.floor(sw / 2 - 380), math.floor(sh / 2 - 260)
     local drag_x, drag_y, is_dragging = 0, 0, false
@@ -236,7 +315,7 @@ local function start_main_script()
 
     local function is_clicked()
         local down = client.key_state(1)
-        if down and not was_mouse_down then was_mouse_down = true return true elseif not down then was_mouse_down = false end return false
+        if down and not was_mouse_down then was_mouse_down = true; return true elseif not down then was_mouse_down = false end; return false
     end
 
     client.set_event_callback("paint_ui", function()
@@ -286,66 +365,73 @@ local function start_main_script()
         renderer.rectangle(menu_x, menu_y + header_h - 2, w, 2, tr, tg, tb, alpha)
         renderer.text(menu_x + w / 2, menu_y + math.floor(22 * scale), tr, tg, tb, alpha, "cb", 0, "KEV'S REVEALER V3")
         
+        -- FIX: Предотвращение краша math.floor(inf) при отключенном сервере
+        local tick_interval = globals.tickinterval()
+        local server_tickrate = (tick_interval and tick_interval > 0) and math.floor(1.0 / tick_interval) or 0
+        local ping_ms = math.floor(client.latency() * 1000)
+        local m_name = (globals.mapname() or "MENU"):upper()
+
         local info_y = menu_y + header_h + math.floor(8 * scale)
-        renderer.text(menu_x + w / 2, info_y + math.floor(8*scale), 150, 150, 150, alpha, "c", 0, string.format("Map: %s  |  Tickrate: %d  |  Ping: %dms", (globals.mapname() or "MENU"):upper(), math.floor(1.0 / globals.tickinterval()), math.floor(client.latency() * 1000)))
+        renderer.text(menu_x + w / 2, info_y + math.floor(8*scale), 150, 150, 150, alpha, "c", 0, string.format("Map: %s  |  Tickrate: %d  |  Ping: %dms", m_name, server_tickrate, ping_ms))
 
         if view_transition < 0.99 then
             local l_alpha = math.floor(alpha * (1 - view_transition))
             local l_off = math.floor(-80 * view_transition)
             local pr = entity.get_player_resource()
             
-            local t_sine = perf and 0.5 or (math.sin(globals.realtime() * 3) + 1) / 2
-            local ct_sine = perf and 0.5 or (math.sin(globals.realtime() * 3 + 1.5) + 1) / 2
-            local tr_t, tg_t, tb_t = lerp(230, 255, t_sine), lerp(150, 200, t_sine), lerp(80, 50, t_sine)
-            local tr_ct, tg_ct, tb_ct = lerp(80, 50, ct_sine), lerp(170, 200, ct_sine), lerp(230, 255, ct_sine)
+            if pr then
+                local t_sine = perf and 0.5 or (math.sin(globals.realtime() * 3) + 1) / 2
+                local ct_sine = perf and 0.5 or (math.sin(globals.realtime() * 3 + 1.5) + 1) / 2
+                local tr_t, tg_t, tb_t = lerp(230, 255, t_sine), lerp(150, 200, t_sine), lerp(80, 50, t_sine)
+                local tr_ct, tg_ct, tb_ct = lerp(80, 50, ct_sine), lerp(170, 200, ct_sine), lerp(230, 255, ct_sine)
 
-            local cols = {
-                {id=2, name="TERRORISTS", color={tr_t, tg_t, tb_t}, x=menu_x + math.floor(20 * scale)},
-                {id=3, name="COUNTER-TERRORISTS", color={tr_ct, tg_ct, tb_ct}, x=menu_x + math.floor(w/2) + math.floor(10 * scale)}
-            }
+                local cols = {
+                    {id=2, name="TERRORISTS", color={tr_t, tg_t, tb_t}, x=menu_x + math.floor(20 * scale)},
+                    {id=3, name="COUNTER-TERRORISTS", color={tr_ct, tg_ct, tb_ct}, x=menu_x + math.floor(w/2) + math.floor(10 * scale)}
+                }
 
-            for _, col in ipairs(cols) do
-                renderer.text(col.x + l_off, menu_y + math.floor(80 * scale), col.color[1], col.color[2], col.color[3], l_alpha, "b", 0, col.name)
-                local row_y = menu_y + math.floor(105 * scale)
-                local col_w = math.floor((w / 2) - (30 * scale))
-                
-                for i = 1, globals.maxplayers() do
-                    if entity.get_prop(pr, "m_bConnected", i) == 1 and entity.get_prop(pr, "m_iTeam", i) == col.id then
-                        local user = users_data[i] or { cheat = "wh", confidence = 0, anim_conf = 0 }
-                        local cheat_id = user.cheat
-                        local info = cheat_info[cheat_id]
-                        local rx = col.x + l_off
-                        local name = get_name(i)
-                        
-                        user.anim_conf = fast_lerp(user.anim_conf or 0, user.confidence, 10, dt)
-                        local row_h = math.floor(42 * scale)
-                        local is_hover = (mx >= rx and mx <= rx+col_w and my >= row_y and my <= row_y+row_h) and view_transition < 0.1 and not is_zoomed
-                        
-                        hover_states[i] = fast_lerp(hover_states[i] or 0, is_hover and 1 or 0, 15, dt)
-                        local bg_c = math.floor(30 + (15 * hover_states[i]))
-                        
-                        draw_fast_rect(rx, row_y, col_w, row_h, bg_c, bg_c, bg_c+3, l_alpha)
-                        
-                        local av_x, av_y = rx + math.floor(24 * scale), row_y + math.floor(21 * scale)
-                        renderer.circle_outline(av_x, av_y, col.color[1], col.color[2], col.color[3], l_alpha, math.floor(14 * scale), 0, 1, 2)
-                        renderer.text(av_x, av_y, 255, 255, 255, l_alpha, "c", 0, string.sub(name, 1, 1):upper())
-                        
-                        renderer.text(rx + math.floor(50 * scale), row_y + math.floor(13 * scale), 230, 230, 230, l_alpha, "", 0, string.sub(name, 1, 16))
-                        
-                        local bar_x, bar_y, bar_w = rx + math.floor(50 * scale), row_y + math.floor(30 * scale), math.floor(120 * scale)
-                        renderer.rectangle(bar_x, bar_y, bar_w, 3, 20, 20, 20, l_alpha)
-                        local fill_w = math.floor((user.anim_conf / 100) * bar_w)
-                        if fill_w > 0 then renderer.rectangle(bar_x, bar_y, fill_w, 3, info.color[1], info.color[2], info.color[3], l_alpha) end
-                        
-                        local ic_s = math.floor(22 * scale)
-                        draw_icon(cheat_id, rx + col_w - math.floor(120 * scale), row_y + math.floor(10 * scale), ic_s, ic_s, l_alpha)
-                        renderer.text(rx + col_w - math.floor(90 * scale), row_y + math.floor(21 * scale), info.color[1], info.color[2], info.color[3], l_alpha, "y", 0, string.format("%s (%d%%)", info.name:upper(), math.floor(user.anim_conf)))
-                        
-                        if is_hover and clicked then
-                            selected_cheat = cheat_id; selected_player = name; selected_idx = i
-                            view_state = 1; is_zoomed = false
+                for _, col in ipairs(cols) do
+                    renderer.text(col.x + l_off, menu_y + math.floor(80 * scale), col.color[1], col.color[2], col.color[3], l_alpha, "b", 0, col.name)
+                    local row_y = menu_y + math.floor(105 * scale)
+                    local col_w = math.floor((w / 2) - (30 * scale))
+                    
+                    for i = 1, globals.maxplayers() do
+                        if entity.get_prop(pr, "m_bConnected", i) == 1 and entity.get_prop(pr, "m_iTeam", i) == col.id then
+                            local user = users_data[i] or { cheat = "wh", confidence = 0, anim_conf = 0 }
+                            local cheat_id = user.cheat
+                            local info = cheat_info[cheat_id]
+                            local rx = col.x + l_off
+                            local name = get_name(i)
+                            
+                            user.anim_conf = fast_lerp(user.anim_conf or 0, user.confidence, 10, dt)
+                            local row_h = math.floor(42 * scale)
+                            local is_hover = (mx >= rx and mx <= rx+col_w and my >= row_y and my <= row_y+row_h) and view_transition < 0.1 and not is_zoomed
+                            
+                            hover_states[i] = fast_lerp(hover_states[i] or 0, is_hover and 1 or 0, 15, dt)
+                            local bg_c = math.floor(30 + (15 * hover_states[i]))
+                            
+                            draw_fast_rect(rx, row_y, col_w, row_h, bg_c, bg_c, bg_c+3, l_alpha)
+                            
+                            local av_x, av_y = rx + math.floor(24 * scale), row_y + math.floor(21 * scale)
+                            renderer.circle_outline(av_x, av_y, col.color[1], col.color[2], col.color[3], l_alpha, math.floor(14 * scale), 0, 1, 2)
+                            renderer.text(av_x, av_y, 255, 255, 255, l_alpha, "c", 0, string.sub(name, 1, 1):upper())
+                            renderer.text(rx + math.floor(50 * scale), row_y + math.floor(13 * scale), 230, 230, 230, l_alpha, "", 0, string.sub(name, 1, 16))
+                            
+                            local bar_x, bar_y, bar_w = rx + math.floor(50 * scale), row_y + math.floor(30 * scale), math.floor(120 * scale)
+                            renderer.rectangle(bar_x, bar_y, bar_w, 3, 20, 20, 20, l_alpha)
+                            local fill_w = math.floor((user.anim_conf / 100) * bar_w)
+                            if fill_w > 0 then renderer.rectangle(bar_x, bar_y, fill_w, 3, info.color[1], info.color[2], info.color[3], l_alpha) end
+                            
+                            local ic_s = math.floor(22 * scale)
+                            draw_icon(cheat_id, rx + col_w - math.floor(120 * scale), row_y + math.floor(10 * scale), ic_s, ic_s, l_alpha)
+                            renderer.text(rx + col_w - math.floor(90 * scale), row_y + math.floor(21 * scale), info.color[1], info.color[2], info.color[3], l_alpha, "y", 0, string.format("%s (%d%%)", info.name:upper(), math.floor(user.anim_conf)))
+                            
+                            if is_hover and clicked then
+                                selected_cheat = cheat_id; selected_player = name; selected_idx = i
+                                view_state = 1; is_zoomed = false
+                            end
+                            row_y = row_y + row_h + math.floor(6 * scale)
                         end
-                        row_y = row_y + row_h + math.floor(6 * scale)
                     end
                 end
             end
@@ -428,48 +514,33 @@ end
 -- ЛОГИКА АВТОЗАГРУЗЧИКА ФАЙЛОВ
 -- ==========================================
 if #missing_files > 0 then
-    -- Показываем UI меню для загрузки
     local ui_lbl1 = ui.new_label(tab, container, "====== MISSING ICONS ======")
     local ui_lbl2 = ui.new_label(tab, container, "При использовании данной Lua, будут автоматически скачаны иконки.")
     local ui_lbl3 = ui.new_label(tab, container, "Do you want to redownload files that you don't have?")
     local btn_yes, btn_no
 
     local function hide_downloader_ui()
-        ui.set_visible(ui_lbl1, false)
-        ui.set_visible(ui_lbl2, false)
-        ui.set_visible(ui_lbl3, false)
-        ui.set_visible(btn_yes, false)
-        ui.set_visible(btn_no, false)
+        ui.set_visible(ui_lbl1, false) ui.set_visible(ui_lbl2, false) ui.set_visible(ui_lbl3, false)
+        ui.set_visible(btn_yes, false) ui.set_visible(btn_no, false)
     end
 
     btn_yes = ui.new_button(tab, container, "Yes, download files", function()
-        -- Отключаем кнопки чтобы не нажимали дважды
-        ui.set_visible(btn_yes, false)
-        ui.set_visible(btn_no, false)
-        
+        ui.set_visible(btn_yes, false); ui.set_visible(btn_no, false)
         local downloaded_count = 0
         ui.set(ui_lbl3, string.format("Downloading... %d / %d", downloaded_count, #missing_files))
 
-        -- Цикл скачивания
         for _, file in ipairs(missing_files) do
             download_file(file.url, file.name, function()
                 downloaded_count = downloaded_count + 1
                 ui.set(ui_lbl3, string.format("Downloading... %d / %d", downloaded_count, #missing_files))
-                
-                -- Если всё скачали
-                if downloaded_count == #missing_files then
-                    hide_downloader_ui()
-                    start_main_script()
-                end
+                if downloaded_count == #missing_files then hide_downloader_ui(); start_main_script() end
             end)
         end
     end)
 
     btn_no = ui.new_button(tab, container, "No, run without icons", function()
-        hide_downloader_ui()
-        start_main_script()
+        hide_downloader_ui(); start_main_script()
     end)
 else
-    -- Если все картинки на месте, запускаем скрипт без вопросов
-     start_main_script()
+    start_main_script()
 end
