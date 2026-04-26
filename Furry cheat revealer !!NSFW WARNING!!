@@ -13,12 +13,12 @@ local tab, container = "LUA", "A"
 -- СПИСОК ФАЙЛОВ ДЛЯ СКАЧИВАНИЯ
 -- ==========================================
 local download_list = {
-    ["Kev.png"] = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/a44b42313f13d6c8eb032b946abf5eadb25ab4de/Kev.png",
-    ["gs.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/a44b42313f13d6c8eb032b946abf5eadb25ab4de/gs.png",
-    ["nl.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/a44b42313f13d6c8eb032b946abf5eadb25ab4de/nl.png",
-    ["ft.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/a44b42313f13d6c8eb032b946abf5eadb25ab4de/ft.png",
-    ["pr.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/a44b42313f13d6c8eb032b946abf5eadb25ab4de/pr.png",
-    ["pd.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/a44b42313f13d6c8eb032b946abf5eadb25ab4de/pd.png"
+    ["Kev.png"] = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/Icons-for-Kevs-Revealer/Kev.png?raw=true",
+    ["gs.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/Icons-for-Kevs-Revealer/gs.png?raw=true",
+    ["nl.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/Icons-for-Kevs-Revealer/nl.png?raw=true",
+    ["ft.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/Icons-for-Kevs-Revealer/ft.png?raw=true",
+    ["pr.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/Icons-for-Kevs-Revealer/pr.png?raw=true",
+    ["pd.png"]  = "https://github.com/AmoPaster/Some-luas-for-gamesense/blob/Icons-for-Kevs-Revealer/pd.png?raw=true"
 }
 
 local missing_files = {}
