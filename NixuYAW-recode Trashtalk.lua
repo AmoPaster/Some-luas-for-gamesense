@@ -1,0 +1,273 @@
+
+local ui_kill_say = ui.new_checkbox("LUA", "B", "Enable NixuYAW-recode Trashtalk [On Kill]")
+local ui_death_say = ui.new_checkbox("LUA", "B", "Enable NixuYAW-recode Trashtalk [On Death]")
+
+local MESSAGES = {
+    ['On Kill'] = {
+        { { 'Gawd damn', 0.70 }, { 'You cannot take me, dont ya?', 1.7 }, },
+        { { 'Someone is fell for my bait', 1.1 }, { 'I guess ppl love my booty kinda too much~', 1.8 }, },
+        { { 'You got killed, again. Shoutout to NixuYAW!', 1.5 }, },
+        { { 'Yeaah, all you can do is just wait untill you respawn', 1.6 }, { 'Just to taste my ass again!', 2.0 } },
+        { { 'Yeah, jerk yourself off to my AA`ss :3', 1.4 }, },
+        { { 'Nice try 1', 1.2 }, { 'Oopsie, wrong button~ I wanted to type ~ instead', 1.5 } },
+        { { 'Cmere boy', 1 }, { 'My thighs will be your pillow~', 1.9 } },
+        { { 'Awww, you thought that I would miss?~', 2.1 }, { 'Dw, Even If I miss, I will stomp on you with my paws', 2.3 } },
+        { { 'Ay, you thought that you could escape from the "kitty?"', 1.4 }, },
+        { { 'While Im spending $5k on fursuit', 1.6 }, {'Youre spending your $1 to rent a box :3', 1.1} },
+        { { 'Не парься, милаш~', 2.1 }, { 'Тебе только и останеться мечтать о том чтобы по мне попасть с первой <3', 1.7 } },
+        { { 'Опять попал под мою пулю...', 2.1 }, { '*Погладил по голове* Все будет хорошо, малыш~', 2.6 } },
+        { { 'Рано или поздно ты же захочешь получить себе мою луашку <3', 1.8 }, { 'Ведь так...?', 2.5 } },
+        { { 'Выстрелил, С любовью от NixuYAW <3', 2.7 } },
+        { { 'Опять не вышло убить меня...', 2.1 }, { 'Ну не парься, в следующий раз выйдет', 2.1 } },
+        { { 'Ты ж мой мальчик, куда ты полетел.', 1.6 }, { 'Присаживайся поудобнее и попей чай, В следующий раз у тебя обязательно выйдет!', 2.1 } },
+        { { 'Lick my paws, just like a good boy you are <3', 1.4 }, },
+        { { 'Shooting ppl with love instead of bullets! NixuYAW <3', 1.6 }, },
+        { { 'Nice Try~', 1.0 }, { 'But well...', 1.7 }, {'you got smashed between my legs', 1.0} },
+        { { 'Boys falling in love with girls', 2.2 }, { 'Men will choose NixuYAW instead ;)', 2.7 } },
+        { { 'Ah... sorry for seating on your face again.', 2.1 }, { 'Hope you liked it~', 2.1 } },
+        { { 'Come on, you can do it!', 1.3 }, { 'You just need some patience', 1.7 }, },
+        { { 'Btw, you know why did you die?', 2.0 }, { 'Thats because your agent found my booty good asf', 1.1 } },
+        { { 'Yo bro', 2.1 }, { 'Instead of bouncing with a crack of some ass lua, get a BD instead', 2.6 } },
+        { { 'Your death is sponsored by NixuYAW and My thighs~', 2.1 } },
+        { { 'Dont look at me like that... That heated gaze of your agent is making me blush', 1.5 }, },
+        { {'Fat ass furry?', 2.2  }, {'Yea, I am. NixuYAW is just too good that it made me one', 2.5 } },
+        { { 'Thx for the kill, Love ya~', 1.3 }, },
+        { { 'Awh, this little guy was bouncing kinda too hard...', 2.3 }, },
+        { { 'Whats wrong? CAT got your tongue?~', 1.9 }, },
+        { { 'If you see me', 1.2 }, { 'Then youre already got between my thighs', 1.8 }, { '≽^•⩊•^≼', 2 } },
+        { { 'Tried to bait me huh?', 2.0 }, { 'Dw, even if you bait me', 2.4 }, { 'My fat ass will ricochet your bullets right back!~', 1.4 } },
+        { { 'Booped your nose and', 2.3 }, { 'You fell...', 2.8 } },
+        { { 'Dont peek on me, thats a bad habit', 2.4 } },
+        { { 'Such a bad peek...', 1.9 } },
+        { { 'I got a bit lucky', 1 }, { ':P', 1 } },
+        { { 'Overwhelmed by my presence?', 2.1 } },
+        { { 'Dw', 1.7 }, { 'Im not going to ride a guy with cheap lua', 2.3 } },
+        { { 'Dear little dom', 2 }, { 'If youre trying to peek, do it faster please', 2.5 }, },
+        { { 'Hn...', 1 }, { 'you look exhausted', 1 }, { 'are you alright...?', 1 }, },
+        { { 'Hope you love being between them', 2 }, { 'Little top', 2.5 } },
+        { { 'Maybe you should leave...', 1.1 }, { 'LOL, nah bro, I would love you to stay! <3', 1.9 }, },
+        { { 'Crushed by Nixu', 1.5 }, },
+        { { 'I guess you really loved my socks', 2 } },
+        { { 'Peeking on me?', 2 }, { 'youre such a perv~', 2.5 } },
+        { { 'Nighty night', 1.1 }, { 'Little dom', 1.9 }, },
+        { { 'Love yaa~', 2 } },
+        { { 'Why did you fell asleep here... you shouldve laid on my bed instead', 2.3 } },
+        { { 'Uhhh... so hard', 1 }, { 'The rock is js hard! what do you think of?', 1 } },
+        { { 'Cmon, you dont need to stand on your knees before me', 2 }, { 'Just try better next time, alright?', 2.5 } },
+        { { 'Ah, sorry didnt notice ya', 3 } },
+        { { 'May I sit there?', 2 }, { 'Oh, forgot. Why am I asking?~', 1.6 } },
+        { { 'Booom', 1.20 }, { 'you fell on the floor... are you alright?', 1.9 }, },
+        { { 'Why are you trying to kill me', 1.20 }, { 'taste my ass instead lol!', 1.6 }, },
+        { { 'Youve told me it was big', 1.20 }, { 'I wanted a bigger monster drink!', 1.20 }, },
+        { { 'Tipped ya with my ass print on your face', 1.50 }, },
+        { { 'While your anti-aims avoiding being killed and failing, mine are not even dodging and yet theyre missing.', 1.20 }, },
+        { { '#NixuYAW #FatBooty #YouAteIt', 1.20 }, },
+        { { 'While you was eating your cheap dog food, I was eating a steak that costs $300', 1.6 }, },
+        { { '"Look at this guy! He tried to kill me but his gaze lowered to my precious booty! :P', 1.2 }, },
+        { { 'and the winner... Is ME! <3', 1.5 }, },
+        { { 'Missed to a resolver? Nah, my ass is just too bouncy', 1.2 }, },
+        { { 'Spotted and taken right away', 1.1 }, },
+        { { 'Oopsie, my booty is too good for you~', 1.4 }, },
+        { { 'What are ya doooin?~', 1.3 }, },
+        { { 'Boom!', 1.4 }, },
+        { { 'Hehe~ you didnt get me', 1.3 }, },
+        { { 'Little boy tried to give some impact, but he fell right in front of my paws', 3 }, },
+        { { 'Get dominated by a Power bottom!', 1.4 }, },
+        { { 'Your in-game character cannot stand a real femboy furry curves, thats why your AAs are buns', 1.3 }, },
+        { { 'Nice moves, but youre still licking my paws?', 1.4 }, },
+        { { 'Whats wrong? Cannot tear up your gaze from me? Little fanatic', 1.6 }, },
+        { { '"I guess my spots are really that good, huh?~",', 1 }, },
+        { { 'Yo bro, your stocking are delivered', 2 }, },
+        { { 'Sorry for forcing ya to lick', 1.5 }, { 'My booty~', 1.5 }, },
+        { { 'Instead of just yapping, put your tongue in a good use!', 1.4 }, },
+        { { 'Eat my ass bro', 1.2 }, },
+        { { 'Yo, why do you look so pleased', 1.1 }, },
+        { { 'You were not ready for the impact', 1.5 }, },
+        { { 'Next time, try to get NixuYAW', 2.3 }, { 'But I think thats not possible lol!', 2.5 } },
+        { { 'Bark for me', 1.9 }, { 'Good boy', 3.1 } },
+        { { 'Im not missing', 2.2 }, { 'Im js a fat ass cat with gamesense', 2.4 } }
+    },
+
+    ['On Death'] = {
+        { { 'awh', 2.1 }, { 'Got a bit unlucky...', 2.4 }, },
+        { { 'I guess my thighs are really that soft~', 3 } },
+        { { 'Well', 3 }, { 'That was a nice shot of yours', 3 } },
+        { { 'Im so Sorry team', 2.8 }, { 'I did a really bad mistake...', 3 } },
+        { { 'Unfortunate', 2.5 }, { 'Next time I will boop ya!~', 3 } },
+        { { 'Gawd damn', 2.9 }, { 'That peek caught me off guard', 3 } },
+        { { 'Oh...', 2 }, { 'I just got killed', 2.3 }, },
+        { { 'Nghh~', 2.3 }, { 'Youre being.. ahnn.~', 2.5 }, { 'too rough... mph', 2 } },
+        { { 'Gosh', 3 }, { 'What a jumpscare', 2 } },
+        { { 'F-fuck... got killed.', 4 } },
+        { { 'Eeep!', 3 }, { 'That hit was a bit too painful!', 3.4 } },
+        { { 'Ngh...~', 3 }, { 'It was a bit too much for me...', 4 } },
+        { { 'I guess', 2 }, { 'сегодня вообще нихуя не стреляет чит', 4 } },
+        { { 'AH!', 1.20 }, { 'Youre so naughty!', 1.2}, },
+        { { 'I think Im cooked', 1.40 }, },
+        { { 'Eh, Now im forced to be the sub bottom...', 1.40 }, },
+        { { 'Gosh, you are so big', 1.20 }, },
+        { { 'My booty...', 1.20 }, { 'I think I wont be able to walk for a while', 1.2}, },
+        { { 'Ehh...', 1.20 }, { 'That was kinda unexpected', 1.2}, },
+        { { 'Well, at least I tried', 1.20 }, { 'but it doesnt helps much...', 1.2}, },
+        { { 'I guess you were really hard in love with my ass', 1.20 }, },
+        { { 'I knew that ppl sometimes', 1.20 }, { 'are too lustful...', 1.2}, },
+        { { 'You were so hard for me...~', 1.20 }, },
+        { { 'Hey! you ripped my thigh-highs', 1.20 }, },
+        { { 'Dont fuck me too hard...~', 1.20 }, },
+        { { 'Nghh~ youre so big...', 1.20 }, },
+        { { 'Nice one, that was a nice kill', 1.20 }, },
+        { { 'Well, you have finally got me ', 1.20 }, { 'cmon, you can lay your head on my thighs~', 1.2 }, },
+        { { 'Awh', 1.20 }, { 'That was not really nice of you', 1.2 }, },
+        { { 'I guess', 1.20 }, { 'I will be the one who worships...', 1.2 }, },
+        { { 'Spreading myself for ya', 1.20 }, { 'Just take me already...', 1.2 }, },
+        { { 'My lua is really good', 1.20 }, { 'Just I was the one who made a mistake.', 1.2 }, },
+        { { 'How long should I wait...', 1.20 }, { 'Untill you fuck me already', 1.2 }, },
+        { { 'Nice headshot', 1.20 }, { 'I guess that tea helped you a bit', 1.2 }, },
+        { { 'Сука', 1.20 }, { 'Ты ж мой мальчик, наконец-то убил меня~<3', 1.2 }, },
+        { { ',kznm z nfrfz ik.pf', 1.20 }, { 'ghjcnj nhf[yb vtyz', 1.2 }, },
+        { { 'Ого', 1.20 }, { 'Такой большой...', 1.2 }, { 'Почему ты так на меня смотришь?, я вообще-то про код в никсуяв говорю~', 1.2 }, },
+        { { 'Как же круто быть...', 1.20 }, { 'Фурри фембоем', 1.2 }, { 'Сначало тебя оттрахивают, а потом ты лежишь на кровати~', 1.2 }, },
+        { { 'Йомайо', 1.20 }, { 'У меня немного попа болеть(', 1.2 }, },
+        { { 'Ребят, ну не ебите так сильно пж', 1.20 }, },
+        { { 'Когда я встану', 1.20 }, { 'Ну наверное ближе к 6~ :3', 3.2 }, },
+        { { 'Ну блииин, хоть смазку используй((', 1.20 }, },
+        { { 'Почему я опять умер?', 1.60 }, { 'У меня же лапки(', 1.2 }, },
+        { { 'Oh my gosh... I got fucked again...', 1.20 }, },
+        { { 'I think I felt something...', 1.20 }, { 'bru, I fell', 0.5 }, },
+        { { 'Fuck... you really filled me...', 1.20 }, },
+        { { 'Im soo full', 1.20 }, },
+        { { 'Я чота отгрузил никсуяв на секунду', 1.50 }, { 'У меня вся коллекция чулков пропала нахуй(', 1.3 }, },
+        { { 'да ну блин((', 1.20 }, { 'Опять меня напрогиб ебут', 1.2 }, },
+        { { 'я не понимаю...', 1.20 }, { 'За что...?', 1.2 }, },
+        { { 'ᓚ₍^ ◞ ‸ ◟^₎ ', 1.20 }, },
+        { { 'Эх...', 1.20 }, { 'Опять убили /ᐠ ╥ ˕ ╥マ', 1.2 }, },
+        { { 'Может я просто', 1.20 }, { 'недостаточно любил этот мир...?', 1.2 }, },
+        { { 'Хех... Возможно получится в следующей жизни', 1.20 }, },
+        { { 'А я ведь...', 1.20 }, { 'всего-то хотел чтобы меня погладили', 1.2 }, },
+        { { 'It was awful', 1.20 }, { 'Im so sorry, team /ᐠ ·•᷄ ˕ •᷅マ', 1.2 }, },
+        { { 'Подайте денег', 1.20 }, { 'Не хватает на смазку', 1.2 }, { 'чут-чут прям', 1.2 }, },
+        { { 'ну бляя(', 1.20 }, { 'Я же отбил пулю попай, пачиму меня убило(' , 1.2 } },
+        { { 'я не верю просто', 1.20 }, { 'Почему именно я...?', 1.5 }, { '(ó﹏ò｡)', 1.2 }, },
+        { { 'Эхх', 1.20 }, { 'резольвер скита опять подвел', 1.2 }, },
+        { { 'я вроде прыгнул', 1.20 }, { 'Ток не на то что нужно', 1.2 }, },
+        { { 'I thought', 1.40 }, { 'that we can be friends...?', 1.2 }, },
+        { { 'Well... unfortunate', 1.20 }, },
+        { { 'huh', 1.20 }, { 'This paste is NOT killing ₍˶Ó﹏Ò ⑅₎', 1.2 }, },
+        { { 'Амиреканскей', 1.20 }, { 'фурре фимбой с толстай попай скачат', 1.2 }, },
+        { { 'я загружаю другой конфиг', 1.20 }, { 'Бля, у меня же лапки', 1.2 }, },
+        { { 'Как же так выходит', 1.20 }, { 'Что я просто сабмиссив фембой(', 1.2 }, },
+        { { 'сукаааа, меня опять', 1.20 }, { 'Отъебали как шлюху... Хотя я не против', 1.2 }, },
+        { { 'Блин, опять не вышло', 1.20 }, { 'Просто чут-чут глупи', 1.2 }, },
+        { { 'Я просто обычный котик, за что так со мной (˚ ˃̣̣̥⌓˂̣̣̥ )', 1.20 }, },
+        { { 'Зашел с оутлавом называется', 1.20 }, { 'Меня оттрахали только в отличии с никсуяв, я удовольствия не получил', 1.2 }, },
+        { { 'Чо за кфг приватный, жеесть', 1.20 }, },
+        { { 'У тибя такие аашки сочные', 1.20 }, { 'Я бы тебе за попу дал потрогать', 1.6 }, },
+        { { 'ну блять', 1.20 }, { 'Опять забыли смазку', 1.2 }, },
+        { { 'Я щас пойду и себе 3 бед драгона куплю наху', 1.20 }, },
+        { { 'Да пачиму опять я умираю', 1.30 }, },
+        { { 'Голову вниз', 1.20 }, { 'Я уже на коленях', 1.3 }, },
+        { { 'У меня никсуяв', 1.20 }, { 'Доставайте пенисы', 1.2 }, },
+        { { 'Щас каааак.', 1.20 }, { 'Щас отсосу.', 1.20 } },
+        { { 'Да блин, я же котик~', 1.20 }, },
+        { { 'I ate a huge meat for breakfast', 1.20 }, },
+        { { 'Мама, против миня монеси играит', 1.20 }, },
+        { { 'я пулю попой словил', 1.20 }, { 'а она не отрикошетила', 1.2 }, },
+        { { 'Что-то на цыганисто-калийном', 1.20 }, },
+        { { 'как ты попал', 1.20 }, { 'у меня же анти-попадайка вкл', 1.2}, },
+        { { 'мы щас порнуху снимаем', 1.20 }, { 'я типо фембой', 1.2 }, { 'меня паралельно сзади ебут, без смазки)', 1.2 }, },
+        { { 'Йоу, поч ты мя убить', 1.20 }, { 'Я всего-то обнимашек хотеть', 1.2 }, },
+        { { 'Я как-то раз с гирбиксом играл на сурсы аирфлоу', 1.50 }, { 'Выиграл гитхаб', 1.2 }, },
+        { { 'ну да все луахи на скит хуйня', 1.20 }, { 'ток Никсу нормальный', 1.2 }, },
+        { { 'ты знаешь что нибудь про удары по попе?', 1.40 }, { 'Ударь меня по ней ещё раз, мне такое нравится~', 1.2 }, },
+        { { 'ого, ты так круто меня убил', 1.20 }, { 'Я тебя в следуюшем раунде ляжками задавлю, с любовью конечно же <3', 1.4 }, },
+        { { 'чел у меня попа бальшой', 1.20 }, { 'Это не я виноват, а моя анатомия', 1.2 }, },
+        { { 'Я щас буду плакать(', 1.20 }, },
+        { { 'Номер?', 1.20 }, { 'Ну не, я ерпшить люблю', 1.2 }, },
+        { { 'Да не суетись просто войди в меня уже, хнн~', 1.20 }, },
+        { { 'Ты юзаешь Furrysense.gay? ', 1.20 }, { 'выеби меня', 1.2 }, },
+        { { 'Никсуяв', 1.20 }, { 'Приватный архив с фурри порно скачать', 1.2 }, },
+        { { 'Ебать у тебя резик крутой, поделись пж <3', 1.20 }, },
+        { { 'ты не такой как все...', 1.20 }, { 'Мне такие нравятся)', 2.0 }, },
+        { { 'Я фембой', 1.20 }, { 'Я хочу чтобы ты мне скинул аашки', 1.2 }, },
+        { { 'Поч ты такой злюка?', 1.20 }, },
+        { { 'Погоди', 1.20 }, { 'Можно тебя в следующем раунде укусить?', 1.2 }, },
+        { { 'Ща я воскресну', 1.20 }, { 'И сяду тебе на личико красивое)', 1.2 }, },
+        { { 'Как-то раз', 1.20 }, { 'Блин, я забыл', 1.2 }, },
+        { { 'Хочу чтобы меня трахнул мой парень', 1.20 }, { 'Я его люблю, и ваще я всех люблю', 1.2 }, },
+        { { 'Ес че никсуэлле никак не относится к этой луашке, я просто сону спиздил(но отметил)', 1.3 }, },
+        { { 'Я такой пидаар, скинуть ножки?', 1.1 }, },
+        { { 'Обычные коты не такие крутые как я', 1.6 }, },
+        { { 'Js breed me already...', 1.1 }, },
+        { { 'Im using nixuyaw-recode, I have a fat ass', 1.3 }, },
+        { { 'Я недавно на фуркон ходил, я потом с типами трахался', 1.6 }, },
+        { { 'Я тебе щас на лицо прыгну', 1.4 }, },
+        { { 'Ебать ты стрельнул, а вот если бы я сел тебе на лицо...', 1.1 }, },
+        { { 'Ты такой милашка, прям любишь меня', 1.3 }, },
+        { { '[gamesense] missed due to not being cute enough', 1.5 }, },
+        { { 'Такими темпами я кончу, ах~', 1.3 }, },
+        { { 'Блин, я хотел обнимашек', 1.2 }, },
+        { { 'Ой, вспомнил что у меня не тот кфг', 1.6 }, },
+        { { 'Ого, хочешь я на тебя сяду в некст раунде?', 1.2 }, },
+        { { 'Если что мои глаза смотрят не на голову, а на пенис', 1.1 }, },
+        { { 'Я щас лапками пойду тебе на лицо становится', 1.1 }, },
+        { { 'А как ты со своим фри луа убил мою приватную луашку NixuYAW-recode', 1.3 }, },
+        { { 'Попа болит ещё, не могу садится', 1.3 }, },
+        { { 'Я щас пойду и у тя резик украду', 1.2 }, },
+        { { 'Йомайо, парень в комнату зашел, сразу ебать начал', 1.4 }, },
+        { { 'Хахахах, у меня опять не вышло сесть на тебя', 1.5 }, },
+        { { 'Я щас трусы сниму', 1.6 }, },
+        { { 'Я хочу на твоей шее укус оставить', 1.2 }, },
+        { { 'я умер? просто я просто e621 открыл', 1.3 }, },
+        { { 'Ибатса хочу', 1.5 }, { 'Щас парню позвоню', 1.8 } },
+        { { 'ну как так то', 1.7 }, { 'опять чулки порвали', 2.0 } },
+        { { 'Ого, ты такой сильный', 1.6 }, { 'Прижми меня к стене пж', 1.9 } },
+        { { 'Клянусь ошейником', 1.8 }, { 'Я люблю большой стейк', 2.1 } },
+        { { 'Можно в твою коробку залезть?', 1.7 }, { 'Просто моя недостаточно большая', 2.0 } },
+        { { 'Плохой мальчик', 1.6 }, { 'Котиков обижать нельзя', 2.2 } },
+        { { 'Such a bad boy', 1.5 }, { 'you wil eat my ass next time', 1.8 } },
+        { { 'A-are you using... cheats???', 1.7 }, { 'Gosh...', 2.0 } },
+        { { 'У меня парень мне еды купил', 1.6 }, { 'отвлекся и ты меня шотнул', 1.9 } },
+        { { 'ого чел ты реально меня трахнул', 1.5 }, { 'Я щас от милоты сдохну :3', 1.8 } }
+    }
+}
+
+local function handle_trashtalk(event_type)
+    local messages_table = MESSAGES[event_type]
+    
+    if not messages_table or #messages_table == 0 then return end
+    
+    local random_index = client.random_int(1, #messages_table)
+    local sequence = messages_table[random_index]
+    
+    local cumulative_delay = 0.0
+    
+    for i = 1, #sequence do
+        local text = sequence[i][1]
+        local delay = sequence[i][2]
+        
+        cumulative_delay = cumulative_delay + delay
+        
+        client.delay_call(cumulative_delay, function()
+            client.exec('say "' .. text .. '"')
+        end)
+    end
+end
+
+client.set_event_callback("player_death", function(e)
+    local local_player = entity.get_local_player()
+    
+    local victim = client.userid_to_entindex(e.userid)
+    local attacker = client.userid_to_entindex(e.attacker)
+    
+    if victim == attacker then return end
+
+    if attacker == local_player and victim ~= local_player then
+        if ui.get(ui_kill_say) then
+            handle_trashtalk('On Kill')
+        end
+    elseif victim == local_player then
+        if ui.get(ui_death_say) then
+            handle_trashtalk('On Death')
+        end
+    end
+end)
